@@ -1,11 +1,9 @@
 """
 Emulates the serial output from arduino when it reads the wheels.
 
-Use uflash to build and flash to the microbit, with watchers:
+Use uflash to build and flash to the microbit:
 
-while inotifywait -e modify microbit_wheel_reader_emulator.py; do
-    uflash microbit_wheel_reader_emulator.py
-done
+    uflash --watch microbit_wheel_reader_emulator.py
 """
 
 import random

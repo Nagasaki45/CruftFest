@@ -12,5 +12,5 @@ python-osc==1.6
 simplegeneric==0.8.1
 six==1.10.0
 traitlets==4.3.1
-uflash==1.0.5
+uflash==1.0.7
 wcwidth==0.1.7

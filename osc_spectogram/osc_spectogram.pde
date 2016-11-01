@@ -39,21 +39,21 @@ void drawArray(float[] array) {
 
 void oscEvent(OscMessage msg) {
   String address = msg.addrPattern();
-  if (address.equals("buffer")) {
+  if (address.equals("/buffer")) {
     Object[] values = msg.arguments();
     buffer = new float[values.length];
     for (int i = 0; i < buffer.length; i++) {
       buffer[i] = (float) values[i];
     }
   }
-  else if (address.equals("spectrum")) {
+  else if (address.equals("/spectrum")) {
     Object[] values = msg.arguments();
     spectrum = new float[values.length];
     for (int i = 0; i < spectrum.length; i++) {
       spectrum[i] = (float) values[i];
     }
   }
-  else if (address.equals("peak")) {
+  else if (address.equals("/peak")) {
     peak = msg.get(0).floatValue();
   }
 }

@@ -5,11 +5,11 @@ import serial  # pySerial
 from pythonosc import udp_client, osc_message_builder
 
 SERIAL_PORT = '/dev/ttyACM*'
-SERIAL_BAUD_RATE = 115200
+SERIAL_BAUD_RATE = 9600
 OSC_PORT = 5005
-BUFFER_SIZE = 256
-MIN_BIN, MAX_BIN = (2, 80)
-PEAK_STABILITY = 0.9
+BUFFER_SIZE = 128
+PEAK_STABILITY = 0.98
+SPECTRAL_THRESHOLD = 30  # Got this from printing spectrum.max() and trying
 
 osc_client = udp_client.UDPClient('localhost', OSC_PORT)
 
@@ -31,16 +31,15 @@ def update_buffer(buffer, new_value):
 def calculate_spectrum(buffer):
     full_size = len(buffer)
     half_size = int(full_size / 2)
-    window = np.hamming(full_size)
-    windowed = buffer * window
-    return abs(np.fft.fft(windowed).real[:half_size]) / np.sqrt(full_size)
+    return abs(np.fft.fft(buffer).real[:half_size]) / np.sqrt(full_size)
 
 
-def low_cut(spectrum):
-    filtered = spectrum.copy()
-    filtered[:MIN_BIN] = 0
-    filtered[MAX_BIN:] = 0
-    return filtered
+def find_peak(spectrum):
+    """Returns the bin of the spectral peak and ignores noisy data."""
+    if spectrum.max() < SPECTRAL_THRESHOLD:
+        return 0
+    else:
+        return spectrum.argmax()
 
 
 def send_osc_message(buffer, address):
@@ -65,13 +64,13 @@ def main():
             continue
         buffer = update_buffer(buffer, new_value)
         spectrum = calculate_spectrum(buffer)
-        filtered = low_cut(spectrum)
-        peak = PEAK_STABILITY * peak + (1 - PEAK_STABILITY) * filtered.argmax()
+        spectrum[0] = 0  # Drop the DC
+        peak = PEAK_STABILITY * peak + (1 - PEAK_STABILITY) * find_peak(spectrum)
 
         # Monitor results with OSC
-        send_osc_message(buffer, 'buffer')
-        send_osc_message(spectrum, 'spectrum')
-        send_osc_message([peak], 'peak')
+        send_osc_message(buffer, '/buffer')
+        send_osc_message(spectrum, '/spectrum')
+        send_osc_message([peak], '/peak')
 
 
 if __name__ == '__main__':

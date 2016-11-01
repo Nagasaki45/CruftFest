@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+_HELP_TEXT = ('Analyse the arduino serial output to find the audio cassette '
+              'wheel spead. Send it to target over OSC.')
+
+import argparse
 import glob
 
 import numpy as np
@@ -6,12 +12,11 @@ from pythonosc import udp_client, osc_message_builder
 
 SERIAL_PORT = '/dev/ttyACM*'
 SERIAL_BAUD_RATE = 9600
-OSC_PORT = 5005
+OSC_MONITOR_PORT = 5005
+OSC_TARGET_PORT = 5006
 BUFFER_SIZE = 128
 PEAK_STABILITY = 0.98
 SPECTRAL_THRESHOLD = 30  # Got this from printing spectrum.max() and trying
-
-osc_client = udp_client.UDPClient('localhost', OSC_PORT)
 
 
 def connect_serial_port():
@@ -42,15 +47,34 @@ def find_peak(spectrum):
         return spectrum.argmax()
 
 
-def send_osc_message(buffer, address):
-    msg = osc_message_builder.OscMessageBuilder(address=address)
-    for value in buffer:
-        msg.add_arg(float(value))
-    msg = msg.build()
-    osc_client.send(msg)
+def update_peak(peak, spectrum):
+    """Returns smoothly changed peak."""
+    new_peak = find_peak(spectrum)
+    return PEAK_STABILITY * peak + (1 - PEAK_STABILITY) * new_peak
+
+
+class OSCClient(udp_client.UDPClient):
+    """Simple OSC client with a `send_message` method."""
+
+    def send_message(self, address, values):
+        msg = osc_message_builder.OscMessageBuilder(address=address)
+        for value in values:
+            msg.add_arg(float(value))
+        msg = msg.build()
+        self.send(msg)
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description=_HELP_TEXT)
+    parser.add_argument('-m', '--monitor', action='store_true',
+                        help='send OSC data to monitor app.')
+    return parser.parse_args()
 
 
 def main():
+    args = parse_arguments()
+    osc_monitor = OSCClient('localhost', OSC_MONITOR_PORT)
+    osc_target = OSCClient('localhost', OSC_TARGET_PORT)
     port = connect_serial_port()
     buffer = np.zeros(BUFFER_SIZE, dtype=float)
     peak = 0
@@ -65,12 +89,14 @@ def main():
         buffer = update_buffer(buffer, new_value)
         spectrum = calculate_spectrum(buffer)
         spectrum[0] = 0  # Drop the DC
-        peak = PEAK_STABILITY * peak + (1 - PEAK_STABILITY) * find_peak(spectrum)
+        peak = update_peak(peak, spectrum)
 
-        # Monitor results with OSC
-        send_osc_message(buffer, '/buffer')
-        send_osc_message(spectrum, '/spectrum')
-        send_osc_message([peak], '/peak')
+        if args.monitor:
+            osc_monitor.send_message('/buffer', buffer)
+            osc_monitor.send_message('/spectrum', spectrum)
+            osc_monitor.send_message('/peak', [peak])
+
+        osc_target.send_message('/speed', [peak])
 
 
 if __name__ == '__main__':

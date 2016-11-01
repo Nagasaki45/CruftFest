@@ -1,0 +1,27 @@
+#N canvas 0 108 450 527 10;
+#X obj 32 49 unpackOSC;
+#X obj 32 23 udpreceive 5006;
+#X obj 32 79 route /speed;
+#X obj 32 157 *;
+#X obj 32 105 t f f;
+#X floatatom 32 184 5 0 0 0 - - -;
+#X obj 59 130 > 0.1;
+#X obj 32 245 osc~;
+#X obj 32 316 *~;
+#X obj 50 286 hsl 128 15 0 1 0 0 empty empty Volume -2 -8 0 10 -262144
+-1 -1 2600 1;
+#X obj 32 344 dac~;
+#X obj 32 217 * 400;
+#X connect 0 0 2 0;
+#X connect 1 0 0 0;
+#X connect 2 0 4 0;
+#X connect 3 0 5 0;
+#X connect 4 0 3 0;
+#X connect 4 1 6 0;
+#X connect 5 0 11 0;
+#X connect 6 0 3 1;
+#X connect 7 0 8 0;
+#X connect 8 0 10 0;
+#X connect 8 0 10 1;
+#X connect 9 0 8 1;
+#X connect 11 0 7 0;

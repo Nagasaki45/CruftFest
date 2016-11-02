@@ -1,4 +1,5 @@
-#N canvas 0 136 684 527 10;
+#N canvas 491 190 684 527 10;
+#X declare -lib mrpeach;
 #X obj 165 52 cnv 15 290 200 empty empty Startup 20 12 0 14 -261682
 -1 0;
 #X obj 180 76 loadbang;
@@ -18,7 +19,7 @@
 #X obj 57 151 > 0.1;
 #X obj 30 391 *~;
 #X obj 77 370 hsl 128 15 0 1 0 0 empty empty Master_volume -2 -8 0
-10 -262144 -1 -1 7800 1;
+10 -262144 -1 -1 8200 1;
 #X obj 30 419 dac~;
 #X obj 30 276 tabread~ loopL;
 #X obj 59 391 *~;
@@ -26,6 +27,7 @@
 #X obj 30 230 phasor~;
 #X obj 30 254 *~ 151263;
 #X obj 30 204 * 0.35;
+#X obj 299 76 import mrpeach;
 #X connect 1 0 2 0;
 #X connect 2 0 4 0;
 #X connect 4 0 3 0;

@@ -8,7 +8,7 @@ import glob
 
 import numpy as np
 import serial  # pySerial
-from pythonosc import udp_client, osc_message_builder
+from pythonosc import udp_client
 
 SERIAL_PORT = '/dev/ttyACM*'
 SERIAL_BAUD_RATE = 9600
@@ -53,17 +53,6 @@ def update_peak(peak, spectrum):
     return PEAK_STABILITY * peak + (1 - PEAK_STABILITY) * new_peak
 
 
-class OSCClient(udp_client.UDPClient):
-    """Simple OSC client with a `send_message` method."""
-
-    def send_message(self, address, values):
-        msg = osc_message_builder.OscMessageBuilder(address=address)
-        for value in values:
-            msg.add_arg(float(value))
-        msg = msg.build()
-        self.send(msg)
-
-
 def parse_arguments():
     parser = argparse.ArgumentParser(description=_HELP_TEXT)
     parser.add_argument('-m', '--monitor', action='store_true',
@@ -73,8 +62,8 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    osc_monitor = OSCClient('localhost', OSC_MONITOR_PORT)
-    osc_target = OSCClient('localhost', OSC_TARGET_PORT)
+    osc_monitor = udp_client.SimpleUDPClient('localhost', OSC_MONITOR_PORT)
+    osc_target = udp_client.SimpleUDPClient('localhost', OSC_TARGET_PORT)
     port = connect_serial_port()
     buffer = np.zeros(BUFFER_SIZE, dtype=float)
     peak = 0
@@ -92,11 +81,11 @@ def main():
         peak = update_peak(peak, spectrum)
 
         if args.monitor:
-            osc_monitor.send_message('/buffer', buffer)
-            osc_monitor.send_message('/spectrum', spectrum)
-            osc_monitor.send_message('/peak', [peak])
+            osc_monitor.send_message('/buffer', map(buffer, float))
+            osc_monitor.send_message('/spectrum', map(spectrum, float))
+            osc_monitor.send_message('/peak', float(peak))
 
-        osc_target.send_message('/speed', [peak])
+        osc_target.send_message('/speed', float(peak))
 
 
 if __name__ == '__main__':

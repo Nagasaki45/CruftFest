@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-_HELP_TEXT = ('Analyse the arduino serial output to find the audio cassette '
-              'wheel spead. Send it to target over OSC.')
+_HELP_TEXT = ('Analyse the arduino serial output to find the speed of the '
+              'audio cassettes\' wheels. Send them to target over OSC.')
 
 import argparse
 import glob
@@ -28,7 +28,7 @@ def connect_serial_port():
 
 def update_buffer(buffer, new_value):
     """Roll the buffer to the left and set the new value in it's end."""
-    new_buffer = np.roll(buffer, -1)
+    new_buffer = np.roll(buffer, -1, axis=0)
     new_buffer[-1] = new_value
     return new_buffer
 
@@ -36,15 +36,12 @@ def update_buffer(buffer, new_value):
 def calculate_spectrum(buffer):
     full_size = len(buffer)
     half_size = int(full_size / 2)
-    return abs(np.fft.fft(buffer).real[:half_size]) / np.sqrt(full_size)
+    return abs(np.fft.fft(buffer, axis=0).real[:half_size]) / np.sqrt(full_size)
 
 
 def find_peak(spectrum):
     """Returns the bin of the spectral peak and ignores noisy data."""
-    if spectrum.max() < SPECTRAL_THRESHOLD:
-        return 0
-    else:
-        return spectrum.argmax()
+    return (spectrum.max(axis=0) > SPECTRAL_THRESHOLD) * spectrum.argmax(axis=0)
 
 
 def update_peak(peak, spectrum):
@@ -55,8 +52,10 @@ def update_peak(peak, spectrum):
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description=_HELP_TEXT)
-    parser.add_argument('-m', '--monitor', action='store_true',
-                        help='send OSC data to monitor app.')
+    parser.add_argument('number', type=int,
+                        help='number of cassettes data to process.')
+    parser.add_argument('-m', '--monitor', type=int,
+                        help='cassette number to send monitoring OSC data for.')
     return parser.parse_args()
 
 
@@ -65,27 +64,30 @@ def main():
     osc_monitor = udp_client.SimpleUDPClient('localhost', OSC_MONITOR_PORT)
     osc_target = udp_client.SimpleUDPClient('localhost', OSC_TARGET_PORT)
     port = connect_serial_port()
-    buffer = np.zeros(BUFFER_SIZE, dtype=float)
-    peak = 0
+    buffer = np.zeros((BUFFER_SIZE, args.number), dtype=float)
+    peak = np.zeros(args.number, dtype=float)
     while True:
-        new_value = port.readline().strip()
+        new_value = port.readline().strip().split(b',')
         try:
-            new_value = float(new_value)
+            new_value = [float(x) for x in new_value]
         except ValueError:
             # There is a chance for broken messages in the serial communication.
             # In this case just skip the message.
             continue
         buffer = update_buffer(buffer, new_value)
         spectrum = calculate_spectrum(buffer)
-        spectrum[0] = 0  # Drop the DC
+        spectrum[0, :] = 0  # Drop the DC
         peak = update_peak(peak, spectrum)
 
-        if args.monitor:
-            osc_monitor.send_message('/buffer', map(buffer, float))
-            osc_monitor.send_message('/spectrum', map(spectrum, float))
-            osc_monitor.send_message('/peak', float(peak))
+        if args.monitor is not None:
+            osc_monitor.send_message('/buffer',
+                                     map(float, buffer[:, args.monitor]))
+            osc_monitor.send_message('/spectrum',
+                                     map(float, spectrum[:, args.monitor]))
+            osc_monitor.send_message('/peak',
+                                     float(peak[args.monitor]))
 
-        osc_target.send_message('/speed', float(peak))
+        osc_target.send_message('/speed', map(float, peak))
 
 
 if __name__ == '__main__':

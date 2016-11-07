@@ -1,39 +1,53 @@
-#N canvas 491 190 684 527 10;
+#N canvas 693 250 684 589 10;
 #X declare -lib mrpeach;
-#X obj 165 52 cnv 15 290 200 empty empty Startup 20 12 0 14 -261682
+#X obj 316 29 cnv 15 290 200 empty empty Startup 20 12 0 14 -261682
 -1 0;
-#X obj 180 76 loadbang;
-#X obj 180 98 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+#X obj 331 53 loadbang;
+#X obj 331 75 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#X obj 180 144 soundfiler;
-#X msg 180 119 read -resize audio/loop.wav loopL loopR;
-#X obj 180 194 table loopL;
-#X obj 180 213 table loopR;
+#X obj 331 122 soundfiler;
+#X msg 331 96 read -resize audio/loop.wav loopL loopR;
+#X obj 331 184 table loopL;
+#X obj 331 203 table loopR;
 #X obj 13 11 cnv 15 130 100 empty empty OSC 20 12 0 14 -204786 -1 0
 ;
 #X obj 30 58 unpackOSC;
 #X obj 30 32 udpreceive 5006;
 #X obj 30 88 route /speed;
-#X obj 30 178 *;
-#X obj 30 126 t f f;
-#X obj 57 151 > 0.1;
-#X obj 30 391 *~;
-#X obj 77 370 hsl 128 15 0 1 0 0 empty empty Master_volume -2 -8 0
-10 -262144 -1 -1 8200 1;
-#X obj 30 419 dac~;
-#X obj 30 276 tabread~ loopL;
-#X obj 59 391 *~;
-#X obj 59 301 tabread~ loopR;
-#X obj 30 230 phasor~;
-#X obj 30 254 *~ 151263;
-#X obj 30 204 * 0.35;
-#X obj 299 76 import mrpeach;
+#X obj 30 227 *;
+#X obj 30 175 t f f;
+#X obj 57 200 > 0.1;
+#X obj 30 509 *~;
+#X obj 161 488 hsl 128 15 0 1 0 0 empty empty Master_volume -2 -8 0
+10 -262144 -1 -1 5200 1;
+#X obj 30 537 dac~;
+#X obj 30 394 tabread~ loopL;
+#X obj 59 509 *~;
+#X obj 59 419 tabread~ loopR;
+#X obj 30 279 phasor~;
+#X obj 30 371 *~ 151263;
+#X obj 30 253 * 0.35;
+#X obj 450 53 import mrpeach;
+#X obj 30 127 unpack f f;
+#X obj 172 227 *;
+#X obj 172 175 t f f;
+#X obj 199 200 > 0.1;
+#X obj 172 279 phasor~;
+#X obj 172 371 *~ 151263;
+#X obj 172 253 * 0.35;
+#X text 98 127 Unpack cassettes;
+#X text 206 314 Just for the demo \, run same loop with 2nd cassette
+\, but in reverse;
+#X obj 172 311 *~ -1;
+#X obj 172 334 +~ 1;
+#X obj 172 394 tabread~ loopL;
+#X obj 201 419 tabread~ loopR;
 #X connect 1 0 2 0;
 #X connect 2 0 4 0;
 #X connect 4 0 3 0;
 #X connect 8 0 10 0;
 #X connect 9 0 8 0;
-#X connect 10 0 12 0;
+#X connect 10 0 24 0;
 #X connect 11 0 22 0;
 #X connect 12 0 11 0;
 #X connect 12 1 13 0;
@@ -48,3 +62,17 @@
 #X connect 21 0 17 0;
 #X connect 21 0 19 0;
 #X connect 22 0 20 0;
+#X connect 24 0 12 0;
+#X connect 24 1 26 0;
+#X connect 25 0 30 0;
+#X connect 26 0 25 0;
+#X connect 26 1 27 0;
+#X connect 27 0 25 1;
+#X connect 28 0 33 0;
+#X connect 29 0 35 0;
+#X connect 29 0 36 0;
+#X connect 30 0 28 0;
+#X connect 33 0 34 0;
+#X connect 34 0 29 0;
+#X connect 35 0 14 0;
+#X connect 36 0 18 0;

@@ -30,12 +30,11 @@ A Pd patch is listening to OSC messages and changes the speed of the audio accor
 
 - Connect the cassettes to the arduino.
 - Upload the sketch to arduino.
-- Run the python script. Optionally, run with `--monitor` flag enable monitoring of the incoming photocell value and the analysis with processing.
+- Run the python script. Run with `--help` to see the available options.
 - Optionally run the processing monitoring application.
 - Run the Pd patch.
 
 ## The current state
 
 - 2 audio cassettes are fully assembled. The third will be soldered -> glued -> ready next week.
-- Everything is built for one cassette only: starting from the arduino code, through the python script that do the signal processing, and to the Pd patch.
 - The Pd patch is just a proof of concept. One audio loop (first two bars of Led Zeppelin's "when the levee breaks") is controlled by one cassette wheel.

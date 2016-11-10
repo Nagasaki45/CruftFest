@@ -15,7 +15,6 @@ SERIAL_BAUD_RATE = 9600
 OSC_MONITOR_PORT = 5005
 OSC_TARGET_PORT = 5006
 BUFFER_SIZE = 128
-PEAK_STABILITY = 0.98
 SPECTRAL_THRESHOLD = 30  # Got this from printing spectrum.max() and trying
 
 
@@ -40,14 +39,9 @@ def calculate_spectrum(buffer):
 
 
 def find_peak(spectrum):
-    """Returns the bin of the spectral peak and ignores noisy data."""
-    return (spectrum.max(axis=0) > SPECTRAL_THRESHOLD) * spectrum.argmax(axis=0)
-
-
-def update_peak(peak, spectrum):
-    """Returns smoothly changed peak."""
-    new_peak = find_peak(spectrum)
-    return PEAK_STABILITY * peak + (1 - PEAK_STABILITY) * new_peak
+    """Returns the bin of the spectral peak if higher than threshold."""
+    max_bin = spectrum.argmax(axis=0)
+    return (spectrum.max(axis=0) > SPECTRAL_THRESHOLD) * max_bin.astype(float)
 
 
 def parse_arguments():
@@ -65,7 +59,6 @@ def main():
     osc_target = udp_client.SimpleUDPClient('localhost', OSC_TARGET_PORT)
     port = connect_serial_port()
     buffer = np.zeros((BUFFER_SIZE, args.number), dtype=float)
-    peak = np.zeros(args.number, dtype=float)
     while True:
         new_value = port.readline().strip().split(b',')
         try:
@@ -77,7 +70,7 @@ def main():
         buffer = update_buffer(buffer, new_value)
         spectrum = calculate_spectrum(buffer)
         spectrum[0, :] = 0  # Drop the DC
-        peak = update_peak(peak, spectrum)
+        peak = find_peak(spectrum)
 
         if args.monitor is not None:
             osc_monitor.send_message('/buffer', buffer[:, args.monitor])

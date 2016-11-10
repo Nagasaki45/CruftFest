@@ -1,4 +1,4 @@
-#N canvas 684 334 753 339 10;
+#N canvas 681 362 753 339 10;
 #X declare -lib mrpeach;
 #X obj 13 11 cnv 15 130 100 empty empty OSC 20 12 0 14 -204786 -1 0
 ;
@@ -35,7 +35,7 @@
 #X obj 532 72 catch~ outL;
 #X obj 561 98 catch~ outR;
 #X obj 360 97 hsl 128 15 0 1 0 0 empty empty Master_volume -2 -8 0
-20 -262144 -1 -1 6100 1;
+20 -262144 -1 -1 7600 1;
 #X obj 360 148 hsl 128 15 0.2 5 1 0 empty init_master_speed Master_speed
 -2 -8 0 20 -262144 -1 -1 6350 1;
 #X floatatom 357 172 5 0 0 0 - - -;
@@ -73,34 +73,6 @@
 #X connect 15 0 3 0;
 #X connect 16 0 4 0;
 #X restore 30 288 pd drums;
-#N canvas 747 611 389 203 zero_filter 0;
-#X obj 11 133 *;
-#X obj 11 81 t f f;
-#X obj 38 106 > 0.1;
-#X obj 11 49 inlet;
-#X obj 11 168 outlet;
-#X text 11 12 Make sure that zero is really zero \, without float precision
-errors!;
-#X connect 0 0 4 0;
-#X connect 1 0 0 0;
-#X connect 1 1 2 0;
-#X connect 2 0 0 1;
-#X connect 3 0 1 0;
-#X restore 30 188 pd zero_filter;
-#N canvas 747 611 389 203 zero_filter 0;
-#X obj 11 133 *;
-#X obj 11 81 t f f;
-#X obj 38 106 > 0.1;
-#X obj 11 49 inlet;
-#X obj 11 168 outlet;
-#X text 11 12 Make sure that zero is really zero \, without float precision
-errors!;
-#X connect 0 0 4 0;
-#X connect 1 0 0 0;
-#X connect 1 1 2 0;
-#X connect 2 0 0 1;
-#X connect 3 0 1 0;
-#X restore 172 188 pd zero_filter;
 #N canvas 662 646 364 219 elections 0;
 #X obj 19 20 inlet;
 #X text 62 20 Wheel speed;
@@ -134,11 +106,13 @@ errors!;
 #X floatatom 30 262 5 0 0 0 - - -;
 #X obj 172 233 *;
 #X obj 30 233 *;
+#X obj 30 188 smoothing;
+#X obj 172 188 smoothing;
 #X connect 1 0 3 0;
 #X connect 2 0 1 0;
 #X connect 3 0 4 0;
-#X connect 4 0 20 0;
-#X connect 4 1 21 0;
+#X connect 4 0 28 0;
+#X connect 4 1 29 0;
 #X connect 6 0 7 0;
 #X connect 8 0 7 1;
 #X connect 10 0 9 0;
@@ -148,11 +122,11 @@ errors!;
 #X connect 14 0 8 1;
 #X connect 15 0 16 0;
 #X connect 16 0 17 0;
-#X connect 20 0 29 0;
-#X connect 21 0 28 0;
-#X connect 23 0 29 1;
-#X connect 24 0 28 1;
-#X connect 26 0 22 0;
-#X connect 27 0 19 0;
-#X connect 28 0 26 0;
-#X connect 29 0 27 0;
+#X connect 21 0 27 1;
+#X connect 22 0 26 1;
+#X connect 24 0 20 0;
+#X connect 25 0 19 0;
+#X connect 26 0 24 0;
+#X connect 27 0 25 0;
+#X connect 28 0 27 0;
+#X connect 29 0 26 0;

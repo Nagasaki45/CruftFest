@@ -1,0 +1,27 @@
+#N canvas 0 136 447 215 10;
+#X obj 13 41 inlet;
+#X obj 13 164 outlet;
+#X obj 13 98 line;
+#N canvas 744 639 389 203 zero_filter 0;
+#X obj 11 133 *;
+#X obj 11 81 t f f;
+#X obj 38 106 > 0.1;
+#X obj 11 49 inlet;
+#X obj 11 168 outlet;
+#X text 11 12 Make sure that zero is really zero \, without float precision
+errors!;
+#X connect 0 0 4 0;
+#X connect 1 0 0 0;
+#X connect 1 1 2 0;
+#X connect 2 0 0 1;
+#X connect 3 0 1 0;
+#X restore 13 136 pd zero_filter;
+#X text 13 7 Make sure to smooth the spectral analysis output. The
+result is more stable.;
+#X obj 13 68 pack f 200;
+#X text 80 67 Ramp time. Higher values result in latency but smoother
+output;
+#X connect 0 0 5 0;
+#X connect 2 0 3 0;
+#X connect 3 0 1 0;
+#X connect 5 0 2 0;

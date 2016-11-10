@@ -80,14 +80,11 @@ def main():
         peak = update_peak(peak, spectrum)
 
         if args.monitor is not None:
-            osc_monitor.send_message('/buffer',
-                                     map(float, buffer[:, args.monitor]))
-            osc_monitor.send_message('/spectrum',
-                                     map(float, spectrum[:, args.monitor]))
-            osc_monitor.send_message('/peak',
-                                     float(peak[args.monitor]))
+            osc_monitor.send_message('/buffer', buffer[:, args.monitor])
+            osc_monitor.send_message('/spectrum', spectrum[:, args.monitor])
+            osc_monitor.send_message('/peak', peak[args.monitor])
 
-        osc_target.send_message('/speed', map(float, peak))
+        osc_target.send_message('/speed', peak)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-const int NUM_OF_CASSETTES = 2;
+const int NUM_OF_CASSETTES = 3;
 
 void setup() {
   Serial.begin(9600);

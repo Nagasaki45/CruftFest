@@ -15,7 +15,7 @@ SERIAL_BAUD_RATE = 9600
 OSC_MONITOR_PORT = 5005
 OSC_TARGET_PORT = 5006
 BUFFER_SIZE = 128
-SPECTRAL_THRESHOLD = 30  # Got this from printing spectrum.max() and trying
+SPECTRAL_THRESHOLD = 25  # Got this from printing spectrum.max() and trying
 
 
 def connect_serial_port():
@@ -69,7 +69,9 @@ def main():
             continue
         buffer = update_buffer(buffer, new_value)
         spectrum = calculate_spectrum(buffer)
-        spectrum[0, :] = 0  # Drop the DC
+        # Drop the DC and attenuate low freqs
+        spectrum[0] = 0
+        spectrum[1] *= .5
         peak = find_peak(spectrum)
 
         if args.monitor is not None:

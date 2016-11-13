@@ -34,12 +34,8 @@ A Pd patch is listening to OSC messages and changes the speed of the audio accor
 - Optionally run the processing monitoring application.
 - Run the Pd patch.
 
-## TODO
-
-- The Pd patch is just a proof of concept. One audio loop (first two bars of Led Zeppelin's "when the levee breaks") is controlled by one cassette wheel.
-
 ## Audio sources
 
-- Samples from freesound: [1](https://freesound.org/people/MTG/sounds/359443/), [2](https://freesound.org/people/MTG/sounds/358439/), [3](https://freesound.org/people/MTG/sounds/361080/), [4](https://freesound.org/people/Carlos_Vaquero/sounds/154278/).
+- Freesound samples for the "cluster cassette": [1](https://freesound.org/people/MTG/sounds/359443/), [2](https://freesound.org/people/MTG/sounds/358439/), [3](https://freesound.org/people/MTG/sounds/361080/), [4](https://freesound.org/people/Carlos_Vaquero/sounds/154278/), [5](https://freesound.org/people/Vlad99/sounds/212989/), [6](https://freesound.org/people/MTG/sounds/360251/), [7](https://freesound.org/people/TaranP/sounds/361396/), [8](https://freesound.org/people/xserra/sounds/77763/), [9](https://freesound.org/people/MTG/sounds/354228/).
 - [Highlights from the 2016 elections debate](https://www.youtube.com/watch?v=mywnPddVYHY).
 - The first bar of Led Zeppelin's "When the levee breaks".

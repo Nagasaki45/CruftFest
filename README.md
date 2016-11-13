@@ -1,6 +1,8 @@
-# CruftFest 2016
+![](docs/images/slide.png)
 
-**A mid term project for the Interactive Digital Multimedia Techniques module, Media and Arts Technology, Queen Mary University of London**
+## What?
+
+CruftFest 2016 project / an assignment to the Interactive Digital Multimedia Techniques (IDMT) module, Media and Arts Technology, Queen Mary University of London.
 
 ## The task
 

@@ -1,4 +1,4 @@
-#N canvas 0 192 447 215 10;
+#N canvas 0 220 447 215 10;
 #X obj 13 41 inlet;
 #X obj 13 164 outlet;
 #X obj 13 98 line;
@@ -20,7 +20,7 @@ errors!;
 result is more stable.;
 #X text 80 67 Ramp time. Higher values result in latency but smoother
 output;
-#X obj 13 68 pack f 300;
+#X obj 13 68 pack f 150;
 #X connect 0 0 6 0;
 #X connect 2 0 3 0;
 #X connect 3 0 1 0;
